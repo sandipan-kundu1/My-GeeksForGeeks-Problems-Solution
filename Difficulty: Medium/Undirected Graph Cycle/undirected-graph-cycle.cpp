@@ -6,27 +6,23 @@ using namespace std;
 // } Driver Code Ends
 class Solution {
   public:
-  bool detect(int i,vector<vector<int>>& adj,vector<int> &vis)
+  bool detect(int i,int parent,vector<vector<int>>& adj,vector<int> &vis)
   {
-      queue<pair<int,int>> q;
-      q.push({i, -1});
+      
       vis[i]=1;
-      while(!q.empty())
-      {
-          int cur=q.front().first;
-          int parent=q.front().second;
-          q.pop();
-          for(auto j:adj[cur])
+      
+          for(auto j:adj[i])
           {
               if(!vis[j])
               {
-                  vis[j]=1;
-                  q.push({j,cur});
+                  if(detect(j,i,adj,vis))
+                  return true;
+                  
               }
               else if(vis[j] && j!=parent)
               return true;
           }
-      }
+      
       return false;
   }
     // Function to detect cycle in an undirected graph.
@@ -39,7 +35,7 @@ class Solution {
             
             if(!vis[i])
             {
-                if(detect(i,adj,vis))
+                if(detect(i,-1,adj,vis))
                 return true;
             }
                 
