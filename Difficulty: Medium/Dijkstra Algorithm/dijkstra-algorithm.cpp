@@ -13,23 +13,31 @@ class Solution {
         // Code here
         int V=adj.size();
         vector<int> dist(V,1e9);
-        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> minheap;
-        minheap.push({0,src});
+        set<pair<int,int>> s;
+        s.insert({0,src});
         dist[src]=0;
-        while(!minheap.empty())
+        while(!s.empty())
         {
-            int dis_src=minheap.top().first;
-            int node=minheap.top().second;
-            minheap.pop();
-            for(auto it:adj[node])
+            auto it=s.begin();
+            
+            int dis=it->first;
+            int node=it->second;
+            s.erase(it);
+            for(auto i:adj[node])
             {
-                if(it.second+dis_src <dist[it.first])
+                int nb=i.first;
+                int wt=i.second;
+                if(dis+wt< dist[nb])
                 {
-                    dist[it.first]=it.second+dis_src;
-                    minheap.push({dist[it.first],it.first});
+                    
+                    if(dist[nb]!=1e9) //when the node has been already traversed, replace the pair in set
+                    {
+                        s.erase({dist[nb],nb});
+                    }
+                    s.insert({dis+wt,nb});
+                    dist[nb]=dis+wt;
                 }
             }
-            
         }
         return dist;
     }
