@@ -9,34 +9,27 @@ using namespace std;
 
 class Solution {
   public:
-    bool f(int ind,int target,vector<int>& arr, vector<vector<int>>& dp)
-    {
-        //base case
-        if(target==0)
-        return true;
-        if(ind==0)
-        {
-            if(arr[ind]==target)
-            return true;
-            else
-            return false;
-        }
-        
-        if(dp[ind][target]!=-1)
-        return dp[ind][target];
-        
-        bool nottake=f(ind-1,target,arr,dp);
-        bool take=false;
-        if(target>=arr[ind])
-        take=f(ind-1,target-arr[ind],arr,dp);
-        return dp[ind][target]=take || nottake;
-    }
     bool isSubsetSum(vector<int>& arr, int target) {
         // code here
         int n=arr.size();
-        vector<vector<int>> dp(n,vector<int>(target+1,-1));
+        vector<vector<bool>> dp(n,vector<bool>(target+1,false));
         
-        return f(n-1,target,arr,dp);
+        for(int i=0;i<n;i++)
+        dp[i][0]=true;
+        dp[0][arr[0]]=true;
+       
+        for(int i=1;i<n;i++)
+        {
+            for(int k=1;k<=target;k++)
+            {
+                bool nottake=dp[i-1][k];
+                bool take=false;
+                if(k>=arr[i])
+                take=dp[i-1][k-arr[i]];
+                dp[i][k]=take | nottake;
+            }
+        }
+        return dp[n-1][target];
     }
 };
 
