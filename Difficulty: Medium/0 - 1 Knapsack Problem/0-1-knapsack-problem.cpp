@@ -6,34 +6,34 @@ using namespace std;
 // } Driver Code Ends
 class Solution {
   public:
-    int f(int ind, int capacity,vector<int> &val, vector<int> &wt,vector<vector<int>>& dp)
-    {
-        //base case
-        if(capacity==0)
-        return 0;
-        if(ind==0)
-        {
-            if(capacity>=wt[0])
-            return val[0];
-            else
-            return 0;
-        }
-        
-        if(dp[ind][capacity]!=-1)
-        return dp[ind][capacity];
-        
-        int notpick=0+f(ind-1,capacity,val,wt,dp);
-        int pick=0;
-        if(capacity>=wt[ind])
-        pick=val[ind]+ f(ind-1, capacity-wt[ind],val,wt,dp);
-        return dp[ind][capacity]=max(pick,notpick);
-    }
     // Function to return max value that can be put in knapsack of capacity.
     int knapSack(int capacity, vector<int> &val, vector<int> &wt) {
         // code here
         int n=val.size();
-        vector<vector<int>> dp(n,vector<int>(capacity+1,-1));
-        return f(n-1,capacity,val,wt,dp);
+        vector<vector<int>> dp(n,vector<int>(capacity+1,0));
+        vector<int> prev(capacity+1,0),cur(capacity+1);
+        //base case
+        for(int j=0;j<=capacity;j++)
+        {
+            if(j>=wt[0])
+            prev[j]=val[0];
+            else
+            prev[j]=0;
+        }
+        
+        for(int i=1;i<n;i++)
+        {
+            for(int j=1;j<=capacity;j++)
+            {
+                int notpick=0+prev[j];
+                int pick=0;
+                if(j>=wt[i])
+                pick=val[i]+ prev[j-wt[i]];
+                cur[j]=max(pick,notpick);
+            }
+            prev=cur;
+        }
+        return prev[capacity];
     }
 };
 
