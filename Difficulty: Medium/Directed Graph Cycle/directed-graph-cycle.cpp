@@ -1,35 +1,40 @@
 class Solution {
 public:
-    bool dfs(int node, vector<vector<int>> &adj, vector<int> &vis, vector<int> &pathvis) {
-        vis[node] = 1;
-        pathvis[node] = 1;
-
-        for(auto i : adj[node]) {
-            if(!vis[i]) {
-                if(dfs(i, adj, vis, pathvis)) return true;
-            } else if(pathvis[i]) {
-                return true;
-            }
-        }
-
-        pathvis[node] = 0;
-        return false;
-    }
-
-    bool isCyclic(int V, vector<vector<int>> &edges) {
-        vector<int> vis(V, 0), pathvis(V, 0);
+    vector<int> topoSort(int V, vector<vector<int>>& edges) {
+        //kahn's algo             indegree+queue(BFS)
+        vector<int> indegre(V,0);
+        for(auto edge:edges)
+            indegre[edge[1]]++;
+            
         vector<vector<int>> adj(V);
         for(auto edge:edges)
-        {
-            adj[edge[0]].push_back(edge[1]);
-        }
+        adj[edge[0]].push_back(edge[1]);
+        vector<int> res;
+        queue<int> q;
+        for(int i = 0; i < V; i++)
+        if(indegre[i] == 0)
+        q.push(i);
 
-        for(int i = 0; i < V; i++) {
-            if(!vis[i]) {
-                if(dfs(i, adj, vis, pathvis)) return true;
+        
+        while(!q.empty())
+        {
+            int node=q.front();
+            q.pop();
+            res.push_back(node);
+            for(auto nei:adj[node])
+            {
+                indegre[nei]--;
+                if(indegre[nei]==0)
+                q.push(nei);    
             }
         }
-
+        return res;
+    }
+    bool isCyclic(int V, vector<vector<int>> &edges) {
+        vector<int> res;
+        res=topoSort(V,edges);
+        if(res.size()<V)
+        return true;
         return false;
     }
 };
